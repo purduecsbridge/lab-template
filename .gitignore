@@ -1,0 +1,10 @@
+# IntelliJ files
+.idea/**/misc.xml
+.idea/**/workspace.xml
+.idea/**/uiDesigner.xml
+
+# macOS
+**/.DS_Store
+
+# Output
+out/
