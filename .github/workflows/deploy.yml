@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start deployment
+        uses: bobheadxi/deployments@v0.2.0
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: production
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Deploy to Docker Hub
+        env:
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        run: |
+          docker login -u pucsbridgebot -p $DOCKER_PASS
+          docker build -t purduecsbridge/labs:${{ github.event.repository.name }}-latest .
+          docker push purduecsbridge/labs:${{ github.event.repository.name }}-latest
+
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v0.2.0
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: https://hub.docker.com/repository/docker/purduecsbridge/labs/tags

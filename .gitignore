@@ -1,0 +1,11 @@
+# IntelliJ
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Output
+out/
+log/
+target/
