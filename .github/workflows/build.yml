@@ -22,22 +22,18 @@ jobs:
         with:
           java-version: 11
 
-      - name: Cache Maven packages
+      - name: Load Maven repository from cache
         uses: actions/cache@v1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build
+      - name: Build and test
         run: |
-          mvn -DskipTests -B package
+          mvn -Denv=dev package
 
       - name: Check test weights
         run: |
           export TEST_PACKAGE=edu.purdue.cs.bridge.${{ github.event.repository.name }}
           java -cp target/autograder.jar -Dtest.package.name=$TEST_PACKAGE edu.purdue.cs.barista.util.WeightCalc
-
-      - name: Test
-        run: |
-          mvn -Denv=dev test
