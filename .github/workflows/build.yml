@@ -15,25 +15,25 @@ jobs:
           known-hosts: github.com
 
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
-      - name: Build
-        run: |
-          git config --file=.gitmodules submodule.lib.url git@github.com:pucsbridge/test-libraries.git
-          git submodule sync
-          git submodule update --init
-          mkdir -p out
-          java_files=`find src/solution tests -name "*.java"`
-          javac -cp lib/*:. -d out $java_files
-          java -cp out/:lib/* com.github.drewsdav.barista.util.WeightCalc
+      - name: Setup JDK and Maven
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
-      - name: Test
+      - name: Load Maven repository from cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build and test
         run: |
-            cp src/solution/* src/
-            java_files=`find src -maxdepth 1 -name "*.java"`
-            for value in $java_files; do sed -i -e '1d' $value; done
-            java_files=`find src tests -name "*.java"`
-            javac -cp lib/*:. -d out $java_files
-            test_files=`find tests -type f -name "*.java" -exec basename {} \;`
-            for value in $test_files; do tests+="${value%.*} "; done
-            java -cp out/:lib/* org.junit.runner.JUnitCore $tests
+          mvn -Denv=dev package
+
+      - name: Check test weights
+        run: |
+          export TEST_PACKAGE=edu.purdue.cs.bridge.${{ github.event.repository.name }}
+          java -cp target/autograder.jar -Dtest.package.name=$TEST_PACKAGE edu.purdue.cs.barista.util.WeightCalc
