@@ -26,7 +26,7 @@
   <repositories>
     <repository>
       <id>github</id>
-      <url>https://maven.pkg.github.com/pucsbridge/barista</url>
+      <url>https://maven.pkg.github.com/purduecsbridge/barista</url>
     </repository>
   </repositories>
 
