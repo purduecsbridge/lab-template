@@ -8,12 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v1
-        with:
-          private-key: ${{ secrets.SSH_KEY }}
-          known-hosts: github.com
-
       - name: Checkout
         uses: actions/checkout@v2
 
