@@ -1,3 +1,3 @@
-FROM purduecsbridge/labs:autograder-latest
+FROM purduecsbridge/autograder:latest
 
 COPY ./target/autograder.jar /autograder/source/autograder.jar
