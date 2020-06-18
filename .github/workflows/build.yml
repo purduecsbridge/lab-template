@@ -26,6 +26,8 @@ jobs:
       - name: Build and test
         run: |
           mvn -Denv=dev package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check test weights
         run: |

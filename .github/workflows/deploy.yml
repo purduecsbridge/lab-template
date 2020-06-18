@@ -43,12 +43,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Docker Hub
-        env:
-          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           docker login -u pucsbridgebot -p $DOCKER_PASS
           docker build -t purduecsbridge/labs:${{ github.event.repository.name }}-latest .
           docker push purduecsbridge/labs:${{ github.event.repository.name }}-latest
+        env:
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
 
       - name: Update deployment status
         uses: bobheadxi/deployments@v0.2.0
