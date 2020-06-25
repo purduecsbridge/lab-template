@@ -10,11 +10,6 @@
 ----
 
 ## Submission
-Submit `File1.java`, `File2.java`, and `File3.java` to the Lab 00 assignment on [Gradescope][gradescope]. Observe the output when the grading is finished and fix any failures that may occur.
+Submit `File1.java`, `File2.java`, and `File3.java` to the Lab 00 assignment on Gradescope. Observe the output when the grading is finished and fix any failures that may occur.
 
 Let a TA know when you are finished.
-
-
-<!-- References -->
-[gradescope]: https://courses.cs.purdue.edu/bridge1:gradescope
-[skeleton-code]: https://courses.cs.purdue.edu/bridge1:labs
