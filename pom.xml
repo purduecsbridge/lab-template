@@ -76,13 +76,6 @@
             <goals>
               <goal>single</goal>
             </goals>
-            <configuration>
-              <archive>
-                <manifest>
-                  <mainClass>${project.groupId}.TestRunner</mainClass>
-                </manifest>
-              </archive>
-            </configuration>
           </execution>
         </executions>
       </plugin>
