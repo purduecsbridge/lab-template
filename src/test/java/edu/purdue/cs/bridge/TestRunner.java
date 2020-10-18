@@ -10,7 +10,7 @@ public class TestRunner {
 
     public static void main(String[] args) {
         System.setProperty("student.package.name", "");
-        System.setProperty("solution.package.name", "edu.purdue.cs.bridge.lab01.solution");
+        System.setProperty("solution.package.name", "edu.purdue.cs.bridge.lab00.solution");
 
         // Add your test suites here
         Class<?>[] testSuites = {};
