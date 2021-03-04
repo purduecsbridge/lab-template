@@ -15,6 +15,7 @@
   </dependencySets>
   <fileSets>
     <fileSet>
+      <!-- Include test cases in JAR -->
       <directory>${project.build.directory}/test-classes</directory>
       <outputDirectory/>
       <includes>

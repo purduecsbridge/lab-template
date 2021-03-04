@@ -26,7 +26,7 @@
   <repositories>
     <repository>
       <id>github</id>
-      <url>https://maven.pkg.github.com/purduecsbridge/barista</url>
+      <url>https://maven.pkg.github.com/purduecsbridge/percolator</url>
     </repository>
   </repositories>
 
@@ -38,15 +38,33 @@
     </dependency>
     <dependency>
       <groupId>edu.purdue.cs</groupId>
-      <artifactId>barista</artifactId>
-      <version>3.0</version>
+      <artifactId>percolator</artifactId>
+      <version>1.2</version>
     </dependency>
   </dependencies>
 
   <build>
     <finalName>autograder</finalName>
+    <resources>
+      <resource>
+        <targetPath>starter-code</targetPath>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>*.java</include>
+          <include>README.md</include>
+        </includes>
+      </resource>
+      <resource>
+        <targetPath>docs</targetPath>
+        <directory>docs</directory>
+        <excludes>
+          <exclude>**/README.md</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
+        <!-- Set solution package name for testing using `mvn test` -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.2</version>
@@ -76,8 +94,26 @@
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>TestRunner</mainClass>
+                </manifest>
+              </archive>
+            </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <!-- Don't compile starter code or include in JAR -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <excludes>
+            <exclude>*.java</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>

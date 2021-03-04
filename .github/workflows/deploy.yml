@@ -2,11 +2,10 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
   repository_dispatch:
-    types: [autograder_update]
+    types: [ autograder_update ]
 
 jobs:
   docker:
@@ -85,16 +84,16 @@ jobs:
           # Make links open in new tab
           sed -i'' -e 's|href="http|target="_blank" href="http|g' ${{ github.event.repository.name }}.html
 
-      - name: Generate Skeleton
+      - name: Generate Starter Code
         run: |
           HOME=$(pwd)
-          if cd src/main/java && zip -r ${{ github.event.repository.name }}-skeleton.zip . -x edu/\* -x *README.md; then
-              mv ${{ github.event.repository.name }}-skeleton.zip $HOME
-              export DEPLOY_SKELETON=1
+          if cd src/main/java && zip -r ${{ github.event.repository.name }}-starter-code.zip . -x edu/\* -x *README.md; then
+              mv ${{ github.event.repository.name }}-starter-code.zip $HOME
+              export DEPLOY_STARTER=1
           else
-              export DEPLOY_SKELETON=0
+              export DEPLOY_STARTER=0
           fi
-          echo "::set-env name=DEPLOY_SKELETON::$DEPLOY_SKELETON"
+          echo "::set-env name=DEPLOY_STARTER::$DEPLOY_STARTER"
 
       - name: Create Release
         id: create_release
@@ -118,13 +117,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Skeleton
-        if: env.DEPLOY_SKELETON == 1
+      - name: Upload Starter Code
+        if: env.DEPLOY_STARTER == 1
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}-skeleton.zip
-          asset_name: ${{ github.event.repository.name }}-skeleton.zip
+          asset_path: ./${{ github.event.repository.name }}-starter-code.zip
+          asset_name: ${{ github.event.repository.name }}-starter-code.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
