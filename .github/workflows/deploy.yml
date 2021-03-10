@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: 11
 
-      - name: Load Maven repository from cache 
+      - name: Load Maven repository from cache
         uses: actions/cache@v1
         with:
           path: ~/.m2
@@ -93,7 +93,7 @@ jobs:
           else
               export DEPLOY_STARTER=0
           fi
-          echo "::set-env name=DEPLOY_STARTER::$DEPLOY_STARTER"
+          echo "DEPLOY_STARTER=$DEPLOY_STARTER" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
