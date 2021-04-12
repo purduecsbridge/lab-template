@@ -8,12 +8,12 @@ on:
     types: [ autograder_update ]
 
 jobs:
-  docker:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Start deployment
-        uses: bobheadxi/deployments@v0.2.0
+        uses: bobheadxi/deployments@v0.5.2
         id: deployment
         with:
           step: start
@@ -50,80 +50,10 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
 
       - name: Update deployment status
-        uses: bobheadxi/deployments@v0.2.0
+        uses: bobheadxi/deployments@v0.5.2
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: https://hub.docker.com/repository/docker/purduecsbridge/labs/tags
-
-  release:
-    runs-on: ubuntu-latest
-    needs: docker
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Checkout Handout Assets
-        uses: actions/checkout@v2
-        with:
-          repository: purduecsbridge/handout-assets
-          path: handout-assets
-
-      - name: Generate Handout
-        uses: docker://pandoc/latex:2.10
-        with:
-          args: "./docs/Handout.md --output=${{ github.event.repository.name }}.html --css=github-pandoc.css --resource-path=./docs/:./handout-assets --self-contained"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Clean Handout
-        run: |
-          # Make links open in new tab
-          sed -i'' -e 's|href="http|target="_blank" href="http|g' ${{ github.event.repository.name }}.html
-
-      - name: Generate Starter Code
-        run: |
-          HOME=$(pwd)
-          if cd src/main/java && zip -r ${{ github.event.repository.name }}-starter-code.zip . -x edu/\* -x *README.md; then
-              mv ${{ github.event.repository.name }}-starter-code.zip $HOME
-              export DEPLOY_STARTER=1
-          else
-              export DEPLOY_STARTER=0
-          fi
-          echo "DEPLOY_STARTER=$DEPLOY_STARTER" >> $GITHUB_ENV
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: v${{ github.run_number }}
-          body: ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Handout
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}.html
-          asset_name: ${{ github.event.repository.name }}.html
-          asset_content_type: text/html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Starter Code
-        if: env.DEPLOY_STARTER == 1
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}-starter-code.zip
-          asset_name: ${{ github.event.repository.name }}-starter-code.zip
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
